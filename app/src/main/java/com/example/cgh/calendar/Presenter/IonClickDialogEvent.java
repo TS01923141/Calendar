@@ -1,6 +1,7 @@
 package com.example.cgh.calendar.Presenter;
 
 import com.example.cgh.calendar.Model.DataSaveByRealm;
+import com.example.cgh.calendar.View.IMainActivity;
 
 import java.util.Calendar;
 
@@ -9,6 +10,8 @@ import java.util.Calendar;
  */
 
 public interface IonClickDialogEvent{
+    void initOnClickDialogEvent(IMainActivity iMainActivity);
+
     //取得item內的資料
     void init(String itemText, String dateTime);
 

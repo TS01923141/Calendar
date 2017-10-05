@@ -1,5 +1,7 @@
 package com.example.cgh.calendar.Presenter;
 
+import com.example.cgh.calendar.View.IMainActivity;
+
 import java.util.Calendar;
 
 /**
@@ -7,6 +9,8 @@ import java.util.Calendar;
  */
 
 public interface IItemAdapter{
+    void initItemAdapter(IMainActivity iMainActivity);
+
     //刷新資料內容
     void refreshItemAdapter();
 

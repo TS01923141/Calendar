@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import com.example.cgh.calendar.Model.DataSaveByRealm;
 import com.example.cgh.calendar.R;
+import com.example.cgh.calendar.View.IMainActivity;
 import com.example.cgh.calendar.View.MainActivity;
 
 import java.util.Calendar;
@@ -22,12 +23,15 @@ import java.util.Calendar;
 
 public class onClickDialogEvent implements IonClickDialogEvent{
     String itemText = ""; String dateTime = "";
+    IMainActivity iMainActivity;
     ICallDateTimePicker callDateTimePicker;
     IRealmController realmController;
 
-    public onClickDialogEvent(IRealmController realmController, ICallDateTimePicker callDateTimePicker){
-        this.realmController = realmController;
-        this.callDateTimePicker = callDateTimePicker;
+    @Override
+    public void initOnClickDialogEvent(IMainActivity iMainActivity){
+        this.iMainActivity = iMainActivity;
+        this.realmController = iMainActivity.getRealmController();
+        this.callDateTimePicker = iMainActivity.getCallDateTimePicker();
     }
 
     //取得item內的資料

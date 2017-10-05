@@ -1,6 +1,7 @@
 package com.example.cgh.calendar.Presenter;
 
 import com.example.cgh.calendar.Model.DataSaveByRealm;
+import com.example.cgh.calendar.View.IMainActivity;
 
 import java.util.Calendar;
 
@@ -11,6 +12,8 @@ import io.realm.RealmResults;
  */
 
 public interface IRealmController{
+    void initRealmController(IMainActivity iMainActivity);
+
     //新增資料
     void insertData(String itemText, String dateTime, int newPosition);
 

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.cgh.calendar.Model.DataSaveByRealm;
 import com.example.cgh.calendar.R;
+import com.example.cgh.calendar.View.IMainActivity;
 import com.example.cgh.calendar.View.MainActivity;
 
 import java.util.ArrayList;
@@ -25,12 +26,15 @@ import io.realm.RealmResults;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> implements IItemAdapter{
     private boolean onBind;
     private RealmResults<DataSaveByRealm> itemData;
+    IMainActivity iMainActivity;
     IRealmController realmController;
     IonClickDialogEvent onClickDialogEvent;
 
-    public ItemAdapter(IonClickDialogEvent onClickDialogEvent, IRealmController realmController) {
-        this.onClickDialogEvent = onClickDialogEvent;
-        this.realmController = realmController;
+    @Override
+    public void initItemAdapter(IMainActivity iMainActivity) {
+        this.iMainActivity = iMainActivity;
+        this.onClickDialogEvent = iMainActivity.getOnClickDialogEvent();
+        this.realmController = iMainActivity.getRealmController();
         itemData = realmController.searchAll();
         Log.i("itemData.size()", String.valueOf(itemData.size()));///////////////////////印出看size是什麼 IF(0 or null)給資料庫預設資料(歡迎使用行事曆)再回傳size else直接回傳size
 

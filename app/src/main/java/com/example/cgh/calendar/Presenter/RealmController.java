@@ -1,9 +1,12 @@
 package com.example.cgh.calendar.Presenter;
 
 import android.provider.ContactsContract;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.example.cgh.calendar.Model.DataSaveByRealm;
+import com.example.cgh.calendar.View.IMainActivity;
+import com.example.cgh.calendar.View.MainActivity;
 
 import java.util.Calendar;
 
@@ -17,6 +20,16 @@ import io.realm.RealmResults;
 
 public class RealmController implements IRealmController{
     Realm mRealm = Realm.getDefaultInstance();
+    IMainActivity iMainActivity;
+    IItemAdapter itemAdapter;
+
+    @Override
+    public void initRealmController(IMainActivity iMainActivity){
+        this.iMainActivity = iMainActivity;
+        this.itemAdapter = iMainActivity.getItemAdapter();
+    }
+
+
 
     //新增資料
     @Override
@@ -36,6 +49,7 @@ public class RealmController implements IRealmController{
                 dataSaveByRealm.setDateTime(dateTime);
             }
         });
+        itemAdapter.refreshItemAdapter();
         Log.i("RealmController.insertData_newPrimaryKey", String.valueOf(newPrimaryKey));
         Log.i("itemText",itemText);
         Log.i("dateTime",dateTime);
@@ -58,6 +72,7 @@ public class RealmController implements IRealmController{
                 updateRealmObj.setDateTime(dateTime);
             }
         });
+        itemAdapter.refreshItemAdapter();
         Log.i("RealmController.insertData_newPrimaryKey", String.valueOf(position));
         Log.i("itemText",itemText);
         Log.i("dateTime",dateTime);
@@ -72,6 +87,7 @@ public class RealmController implements IRealmController{
                 dataSaveByRealm.deleteFromRealm(position);
             }
         });
+        itemAdapter.refreshItemAdapter();
     }
     //查詢資料
     @Override

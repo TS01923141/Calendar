@@ -27,7 +27,10 @@ import com.example.cgh.calendar.R;
 import java.util.Calendar;
 
 import io.realm.Realm;
+/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+要先解決Presenter互new與nullObject問題(new的時候Activity還沒建)
 
+ */
 public class MainActivity extends AppCompatActivity implements IMainActivity{
     private static Context context;
     public static Activity activity;
@@ -67,16 +70,23 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         activity = MainActivity.this;
         Realm.init(this);
 
+        //先初始化，當要用到時才用get的方始取得其他Presenter，避免無窮迴圈與nullObject情況
+
         //初始化CallDateTimePicker
         callDateTimePicker = new CallDateTimePicker();
         //初始化RealmController
         realmController = new RealmController();
+        onClickDialogEvent = new onClickDialogEvent();
+        itemAdapter = new ItemAdapter();
+        realmController.initRealmController(this);
         //若資料庫大小為0，新增一筆資料避免錯誤
         if(realmController.searchAll().size()==0)  realmController.insertData("Welcome to use Calendar", callDateTimePicker.getCurrentTime(), 0);
         //onCreate之後才初始化alertDialog，避免null問題
-        onClickDialogEvent = new onClickDialogEvent(realmController, callDateTimePicker);
+        //onClickDialogEvent = new onClickDialogEvent();
+        onClickDialogEvent.initOnClickDialogEvent(this);
         //初始化RecyclerView
-        itemAdapter = new ItemAdapter(onClickDialogEvent, realmController);
+        //itemAdapter = new ItemAdapter();
+        itemAdapter.initItemAdapter(this);
         itemRecyclerView = (RecyclerView) findViewById(R.id.list);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
