@@ -36,10 +36,13 @@ public class RealmController implements IRealmController{
                 dataSaveByRealm.setDateTime(dateTime);
             }
         });
+        Log.i("RealmController.insertData_newPrimaryKey", String.valueOf(newPrimaryKey));
+        Log.i("itemText",itemText);
+        Log.i("dateTime",dateTime);
     }
     //修改資料
     @Override
-    public void updateData(final String itemText, final String dataTime, final int position){
+    public void updateData(final String itemText, final String dateTime, final int position){
         mRealm.executeTransaction(new Realm.Transaction(){
             @Override
             public void execute(Realm realm){
@@ -52,9 +55,12 @@ public class RealmController implements IRealmController{
                 */
                 DataSaveByRealm updateRealmObj = mRealm.where(DataSaveByRealm.class).equalTo("ID",position).findFirst();
                 updateRealmObj.setItemText(itemText);
-                updateRealmObj.setDateTime(dataTime);
+                updateRealmObj.setDateTime(dateTime);
             }
         });
+        Log.i("RealmController.insertData_newPrimaryKey", String.valueOf(position));
+        Log.i("itemText",itemText);
+        Log.i("dateTime",dateTime);
     }
     //刪除資料
     @Override

@@ -1,5 +1,6 @@
 package com.example.cgh.calendar.Presenter;
 
+import android.content.ClipData;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
@@ -24,8 +25,17 @@ import io.realm.RealmResults;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> implements IItemAdapter{
     private boolean onBind;
     private RealmResults<DataSaveByRealm> itemData;
-    IRealmController realmController = new RealmController();
-    IonClickDialogEvent onClickDialogEvent = new onClickDialogEvent();
+    IRealmController realmController;
+    IonClickDialogEvent onClickDialogEvent;
+
+    public ItemAdapter(IonClickDialogEvent onClickDialogEvent, IRealmController realmController) {
+        this.onClickDialogEvent = onClickDialogEvent;
+        this.realmController = realmController;
+        itemData = realmController.searchAll();
+        Log.i("itemData.size()", String.valueOf(itemData.size()));///////////////////////印出看size是什麼 IF(0 or null)給資料庫預設資料(歡迎使用行事曆)再回傳size else直接回傳size
+
+    }
+
     //初始化及載入元件
     public class ViewHolder extends RecyclerView.ViewHolder{
         public TextView itemText;
@@ -38,8 +48,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
     }
     //載入資料內容
     @Override
-    public void ItemAdapter(){
+    public void refreshItemAdapter(){
         itemData = realmController.searchAll();
+        notifyDataSetChanged();
         Log.i("itemData.size()", String.valueOf(itemData.size()));///////////////////////印出看size是什麼 IF(0 or null)給資料庫預設資料(歡迎使用行事曆)再回傳size else直接回傳size
     }
     //載入ListLayout
@@ -53,7 +64,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
     //連結ListLayout的元件並作處理
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position){
-        onBind = true;
+        //onBind = true;
         holder.itemText.setText(itemData.get(position).getItemText());
         holder.dateTime.setText(itemData.get(position).getDateTime());
         holder.itemView.setOnClickListener(new View.OnClickListener(){
@@ -66,17 +77,21 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
                 //onClickDialogEvent = new onClickDialogEvent();
                 onClickDialogEvent.init(edit_itemText,edit_dateTime);
                 //儲存更改後的值並改變資料庫的內容
-                DataSaveByRealm returnString = onClickDialogEvent.Click();
+                onClickDialogEvent.Click(position);
+                refreshItemAdapter();
+                /*
+                DataSaveByRealm returnString = onClickDialogEvent.Click(position);
                 itemData.get(position).setItemText(returnString.getItemText());
                 itemData.get(position).setDateTime(returnString.getDateTime());
                 realmController.updateData(itemData.get(position).getItemText(), itemData.get(position).getDateTime(), position);
+                */
                 //ItemAdapter();
-                //notifyDataSetChanged();
+                notifyDataSetChanged();
             }
         });
-        holder.itemText.setText(itemData.get(position).getItemText());
-        holder.dateTime.setText(itemData.get(position).getDateTime());
-        onBind = false;
+        //holder.itemText.setText(itemData.get(position).getItemText());
+        //holder.dateTime.setText(itemData.get(position).getDateTime());
+        //onBind = false;
     }
     //計算內容有幾個item
     @Override
@@ -84,9 +99,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
 /*
         if(itemData==null)  Log.i("itemData.size", "null");
         else    Log.i("itemData.size", String.valueOf(itemData.size()));
-*/
-        //若資料庫內是空值，新增一筆資料避免錯誤
+        若資料庫內是空值，新增一筆資料避免錯誤
         if(itemData==null)  addItem("Welcome to use Calendar","000000000000");
+*/
         return itemData.size();
     }
     //新增item-新增資料進資料庫後刷新
@@ -94,17 +109,24 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
     public void addItem(String itemText, String dateTime){
         int newPrimaryKey;
         Log.i("searchAll()", String.valueOf(realmController.searchAll()));
-        if(realmController.searchAll().isEmpty()) newPrimaryKey = 0;
+        if(realmController.searchAll().isEmpty()) newPrimaryKey = 0;//////////////////////////////宣告時newPremaryKey直接設0就好，因為只有資料庫無資料才會呼叫
         else newPrimaryKey  = realmController.searchAll().last().getID()+1;
         realmController.insertData(itemText, dateTime, newPrimaryKey);
-        ItemAdapter();
+        //refreshItemAdapter();
         //notifyItemChanged(newPrimaryKey);
+        notifyDataSetChanged();
+    }
+    @Override
+    public void updateItem(String itemText, String dateTime, int position){
+        realmController.updateData(itemText, dateTime, position);
+        //refreshItemAdapter();
         //notifyDataSetChanged();
     }
     @Override
     //刪除item
     public void removeItem(int index){
         itemData.remove(index);
+        refreshItemAdapter();
     }
 }
 /*

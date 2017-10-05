@@ -12,5 +12,5 @@ public interface IonClickDialogEvent{
     //取得item內的資料
     void init(String itemText, String dateTime);
 
-    DataSaveByRealm Click();
+    void Click(int position);
 }

@@ -15,7 +15,7 @@ public interface IRealmController{
     void insertData(String itemText, String dateTime, int newPosition);
 
     //修改資料
-    void updateData(String itemText, String dataTime, int position);
+    void updateData(String itemText, String dateTime, int position);
 
     //刪除資料
     void deleteDate(int position);

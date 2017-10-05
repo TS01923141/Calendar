@@ -7,9 +7,15 @@ import java.util.Calendar;
  */
 
 public interface IItemAdapter{
-    void ItemAdapter();
+    //刷新資料內容
+    void refreshItemAdapter();
+
     int getItemCount();
+    //新增item
     void addItem(String itemText, String dateTime);
+    //修改item
+    void updateItem(String itemText, String dateTime, int position);
+
     //刪除item
     void removeItem(int index);
 }
