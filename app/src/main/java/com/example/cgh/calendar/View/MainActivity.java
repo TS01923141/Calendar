@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
     IonClickDialogEvent onClickDialogEvent;
     IRealmController realmController;
     ICallDateTimePicker callDateTimePicker;
+    //getPresenter，當其他Presenter可能需要呼叫其他Presenter時透過此方法
     @Override
     public Context getAppContext(){
         return MainActivity.context;
@@ -66,26 +68,23 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MainActivity.context = getApplicationContext();
-        //MainActivity.context = this;
         activity = MainActivity.this;
         Realm.init(this);
 
-        //先初始化，當要用到時才用get的方始取得其他Presenter，避免無窮迴圈與nullObject情況
-
-        //初始化CallDateTimePicker
+        //等super.onCreate結束之後才開始new Presenter，避免，避免null問題
         callDateTimePicker = new CallDateTimePicker();
-        //初始化RealmController
         realmController = new RealmController();
         onClickDialogEvent = new onClickDialogEvent();
         itemAdapter = new ItemAdapter();
+        //先new，當要用到時才用init(IMainActivity.getPresenter)的方式取得其他Presenter，避免無窮迴圈與nullObject情況
+
+        //初始化RealmController
         realmController.initRealmController(this);
         //若資料庫大小為0，新增一筆資料避免錯誤
         if(realmController.searchAll().size()==0)  realmController.insertData("Welcome to use Calendar", callDateTimePicker.getCurrentTime(), 0);
-        //onCreate之後才初始化alertDialog，避免null問題
-        //onClickDialogEvent = new onClickDialogEvent();
+        //初始化alertDialog
         onClickDialogEvent.initOnClickDialogEvent(this);
         //初始化RecyclerView
-        //itemAdapter = new ItemAdapter();
         itemAdapter.initItemAdapter(this);
         itemRecyclerView = (RecyclerView) findViewById(R.id.list);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -93,10 +92,9 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         itemRecyclerView.setLayoutManager(layoutManager);
         itemRecyclerView.setAdapter((RecyclerView.Adapter) itemAdapter);
 
-        //test Realm的值
-        /*Log.i("Realm-no.1_data-ID", String.valueOf(realmController.searchAll().get(1).getID()));
-        Log.i("itemText",realmController.searchAll().get(1).getItemText());
-        Log.i("dateTime",realmController.searchAll().get(1).getDateTime());*/
+        //RecycleView滑動控制
+        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(itemAdapter.swipController());
+        mItemTouchHelper.attachToRecyclerView(itemRecyclerView);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener(){
@@ -105,13 +103,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
                 //按下fab跳出AlertDialog，設定完成後新增資料
                 onClickDialogEvent.init("",callDateTimePicker.getCurrentTime());//清空itemText跟dateTime
                 onClickDialogEvent.Click(-1);//-1代表新增
-                //((RecyclerView.Adapter) itemAdapter).notifyDataSetChanged();
-                /*
-                //DataSaveByRealm returnString = onClickDialogEvent.Click(-1);//-1代表新增
-                String itemText = returnString.getItemText();
-                String dateTime = returnString.getDateTime();
-                itemAdapter.addItem(itemText, dateTime);
-                */
 
             }
         });

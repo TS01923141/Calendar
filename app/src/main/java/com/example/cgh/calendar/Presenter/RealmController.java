@@ -29,18 +29,9 @@ public class RealmController implements IRealmController{
         this.itemAdapter = iMainActivity.getItemAdapter();
     }
 
-
-
     //新增資料
     @Override
     public void insertData(final String itemText, final String dateTime, final int newPrimaryKey){
-        int newPrimaryKeyValue;
-        /*
-        Log.i("searchAll()", String.valueOf(searchAll()));
-        if(searchAll().isEmpty()) newPrimaryKeyValue = 0;
-        else newPrimaryKeyValue = searchAll().last().getID()+1;
-        final int newPrimaryKey = newPrimaryKeyValue;
-        */
         mRealm.executeTransaction(new Realm.Transaction(){
             @Override
             public void execute(Realm realm){
@@ -50,9 +41,6 @@ public class RealmController implements IRealmController{
             }
         });
         itemAdapter.refreshItemAdapter();
-        Log.i("RealmController.insertData_newPrimaryKey", String.valueOf(newPrimaryKey));
-        Log.i("itemText",itemText);
-        Log.i("dateTime",dateTime);
     }
     //修改資料
     @Override
@@ -60,22 +48,12 @@ public class RealmController implements IRealmController{
         mRealm.executeTransaction(new Realm.Transaction(){
             @Override
             public void execute(Realm realm){
-                /*
-                DataSaveByRealm updateRealmObj = new DataSaveByRealm();
-                updateRealmObj.setID(position);
-                updateRealmObj.setItemText(itemText);
-                updateRealmObj.setDateTime(dataTime);
-                realm.copyFromRealm(updateRealmObj);
-                */
                 DataSaveByRealm updateRealmObj = mRealm.where(DataSaveByRealm.class).equalTo("ID",position).findFirst();
                 updateRealmObj.setItemText(itemText);
                 updateRealmObj.setDateTime(dateTime);
             }
         });
         itemAdapter.refreshItemAdapter();
-        Log.i("RealmController.insertData_newPrimaryKey", String.valueOf(position));
-        Log.i("itemText",itemText);
-        Log.i("dateTime",dateTime);
     }
     //刪除資料
     @Override

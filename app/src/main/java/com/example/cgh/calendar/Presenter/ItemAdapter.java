@@ -16,6 +16,7 @@ import com.example.cgh.calendar.View.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 
 import io.realm.RealmResults;
 
@@ -68,9 +69,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
     //連結ListLayout的元件並作處理
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position){
-        //onBind = true;
+        //將YYYYMMDDhhmm格式轉為YYYY/MM/DD hh:mm
+        String viewDateTime = itemData.get(position).getDateTime().substring(0,4) + "/" +
+                itemData.get(position).getDateTime().substring(4,6) + "/" +
+                itemData.get(position).getDateTime().substring(6,8) + " " +
+                itemData.get(position).getDateTime().substring(8,10) + ":" +
+                itemData.get(position).getDateTime().substring(10);
+
         holder.itemText.setText(itemData.get(position).getItemText());
-        holder.dateTime.setText(itemData.get(position).getDateTime());
+        holder.dateTime.setText(viewDateTime);
         holder.itemView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){//點擊修改事件
@@ -78,34 +85,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
                 String edit_itemText = itemData.get(position).getItemText();
                 String edit_dateTime = itemData.get(position).getDateTime();
                 //呼叫Dialog更改值
-                //onClickDialogEvent = new onClickDialogEvent();
                 onClickDialogEvent.init(edit_itemText,edit_dateTime);
                 //儲存更改後的值並改變資料庫的內容
                 onClickDialogEvent.Click(position);
                 refreshItemAdapter();
-                /*
-                DataSaveByRealm returnString = onClickDialogEvent.Click(position);
-                itemData.get(position).setItemText(returnString.getItemText());
-                itemData.get(position).setDateTime(returnString.getDateTime());
-                realmController.updateData(itemData.get(position).getItemText(), itemData.get(position).getDateTime(), position);
-                */
-                //ItemAdapter();
                 notifyDataSetChanged();
             }
         });
-        //holder.itemText.setText(itemData.get(position).getItemText());
-        //holder.dateTime.setText(itemData.get(position).getDateTime());
-        //onBind = false;
     }
     //計算內容有幾個item
     @Override
     public int getItemCount(){
-/*
-        if(itemData==null)  Log.i("itemData.size", "null");
-        else    Log.i("itemData.size", String.valueOf(itemData.size()));
-        若資料庫內是空值，新增一筆資料避免錯誤
-        if(itemData==null)  addItem("Welcome to use Calendar","000000000000");
-*/
         return itemData.size();
     }
     //新增item-新增資料進資料庫後刷新
@@ -116,21 +106,42 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
         if(realmController.searchAll().isEmpty()) newPrimaryKey = 0;//////////////////////////////宣告時newPremaryKey直接設0就好，因為只有資料庫無資料才會呼叫
         else newPrimaryKey  = realmController.searchAll().last().getID()+1;
         realmController.insertData(itemText, dateTime, newPrimaryKey);
-        //refreshItemAdapter();
-        //notifyItemChanged(newPrimaryKey);
-        notifyDataSetChanged();
     }
     @Override
     public void updateItem(String itemText, String dateTime, int position){
         realmController.updateData(itemText, dateTime, position);
-        //refreshItemAdapter();
-        //notifyDataSetChanged();
     }
     @Override
     //刪除item
     public void removeItem(int index){
-        itemData.remove(index);
-        refreshItemAdapter();
+        realmController.deleteDate(index);
+    }
+    @Override
+    //RecyclerView滑動刪除與item上下位移
+    public ItemTouchHelper.Callback swipController(){
+         ItemTouchHelper.Callback mCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP|ItemTouchHelper.DOWN,ItemTouchHelper.START|ItemTouchHelper.END){
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                int formPosition = viewHolder.getAdapterPosition();
+                int toPosition = target.getAdapterPosition();
+                notifyItemMoved(formPosition, toPosition);
+                //Collections.swap(itemData,formPosition,toPosition);
+                return true;
+            }
+
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                return makeMovementFlags(getDragDirs(recyclerView, viewHolder), getSwipeDirs(recyclerView, viewHolder));
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                removeItem(position);
+                notifyItemRemoved(position);
+            }
+        };
+        return mCallback;
     }
 }
 /*

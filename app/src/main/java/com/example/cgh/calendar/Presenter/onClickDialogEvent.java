@@ -45,43 +45,41 @@ public class onClickDialogEvent implements IonClickDialogEvent{
         //初始化自訂Dialog介面與設定
         final View item = LayoutInflater.from(MainActivity.activity).inflate(R.layout.dialog_view,null);
         final EditText edit_itemText = item.findViewById(R.id.edit_itemText);
-        final EditText edit_dateTime = item.findViewById(R.id.edit_dataTime);
-        //final Button confirm_edit = item.findViewById(R.id.confirm_edit);
+        final EditText edit_date = item.findViewById(R.id.edit_data);
+        final EditText edit_time = item.findViewById(R.id.edit_time);
         //editText帶入目前資料
         edit_itemText.setText(itemText);
-        edit_dateTime.setText(dateTime);
-        //edit_dateTime.setText(dateTime.get(Calendar.YEAR)+dateTime.get(Calendar.MONTH)+
-        //        dateTime.get(Calendar.DAY_OF_MONTH)+dateTime.get(Calendar.HOUR_OF_DAY)+dateTime.get(Calendar.MINUTE));
-        //點擊edit_dateTime跳出日期時間選單
-        /*
-        edit_dateTime.setOnClickListener(new View.OnClickListener(){
-            dateTime = callDateTimePicker.callDateTimePickerDialog();
-        });*/
-        edit_dateTime.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+        //將YYYYMMDDhhmm轉為 YYYY/MM/DD hh:mm
+        //edit_date.setText(dateTime.substring(0,8));
+        edit_date.setText(
+                dateTime.substring(0,4) + "/" +
+                dateTime.substring(4,6) + "/" +
+                dateTime.substring(6,8)
+        );
+        //edit_time.setText(dateTime.substring(8));
+        edit_time.setText(
+                dateTime.substring(8,10) + ":" +
+                dateTime.substring(10)
+        );
+
+        //點擊edit_date修改日期
+        edit_date.setOnFocusChangeListener(new View.OnFocusChangeListener(){
             @Override
             public void onFocusChange(View v, boolean hasFocus){
                 if(hasFocus){
-                    dateTime = callDateTimePicker.callDateTimePickerDialog();
+                    callDateTimePicker.callDatePickerDialog(edit_date, dateTime);
                 }
-                edit_dateTime.setText(dateTime);
             }
         });
-/*
-        confirm_edit.setOnClickListener(new View.OnClickListener(){
+        //點擊edit_time修改時間
+        edit_time.setOnFocusChangeListener(new View.OnFocusChangeListener(){
             @Override
-            public void onClick(View view) {
-                //取得在AlertDialog修改後的值並新增/修改資料庫的值
-                itemText = edit_itemText.getText().toString();
-                dateTime = edit_dateTime.getText().toString();
-                //if(position == -1)代表新增，其餘則為修改
-                if (position == -1) {
-                    int newPrimaryKey  = realmController.searchAll().last().getID()+1;
-                    realmController.insertData(itemText, dateTime, newPrimaryKey);
-                }else realmController.updateData(itemText, dateTime, position);
-                Log.i("confirm_edit","confirm_edit");
+            public void onFocusChange(View v, boolean hasFocus){
+                if(hasFocus){
+                    callDateTimePicker.callTimePickerDialog(edit_time, dateTime);
+                }
             }
         });
-*/
         //Dialog
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.activity);
         alertDialogBuilder
@@ -92,7 +90,7 @@ public class onClickDialogEvent implements IonClickDialogEvent{
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //取得在AlertDialog修改後的值並新增/修改資料庫的值
                         itemText = edit_itemText.getText().toString();
-                        dateTime = edit_dateTime.getText().toString();
+                        dateTime = dateFormat2String(edit_date.getText().toString(), edit_time.getText().toString());
                         //if(position == -1)代表新增，其餘則為修改
                         if (position == -1) {
                             int newPrimaryKey  = realmController.searchAll().last().getID()+1;
@@ -103,6 +101,15 @@ public class onClickDialogEvent implements IonClickDialogEvent{
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+    //將edit的YYYY/MM/DD hh:mm 轉為 YYYYMMDDhhmm
+    private String dateFormat2String(String date, String time){
+        String dateTime = date.substring(0,4) +
+                date.substring(5,7) +
+                date.substring(8) +
+                time.substring(0,2) +
+                time.substring(3);
+        return dateTime;
     }
 }
 

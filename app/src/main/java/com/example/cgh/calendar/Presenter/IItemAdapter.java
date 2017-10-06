@@ -1,5 +1,7 @@
 package com.example.cgh.calendar.Presenter;
 
+import android.support.v7.widget.helper.ItemTouchHelper;
+
 import com.example.cgh.calendar.View.IMainActivity;
 
 import java.util.Calendar;
@@ -22,4 +24,6 @@ public interface IItemAdapter{
 
     //刪除item
     void removeItem(int index);
+
+    ItemTouchHelper.Callback swipController();
 }

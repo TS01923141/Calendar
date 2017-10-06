@@ -1,5 +1,7 @@
 package com.example.cgh.calendar.Presenter;
 
+import android.widget.EditText;
+
 import java.util.Calendar;
 
 /**
@@ -7,9 +9,11 @@ import java.util.Calendar;
  */
 
 public interface ICallDateTimePicker{
-    //呼叫時間、日期選擇器，將時間日期轉為String(yyyymmddhhmm)後回傳
-    //****************************************************************************須設定Calendar預設值
-    String callDateTimePickerDialog();
+    //取得日期
+    void callDatePickerDialog(EditText dateText, String dateTime);
+    //取得時間
+    void callTimePickerDialog(EditText timeText, String dateTime);
+
     //回傳目前時間
     String getCurrentTime();
 }
