@@ -1,7 +1,13 @@
 package com.example.cgh.calendar.View;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,12 +21,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cgh.calendar.Model.DataSaveByRealm;
+import com.example.cgh.calendar.Presenter.AlarmController;
 import com.example.cgh.calendar.Presenter.CallDateTimePicker;
+import com.example.cgh.calendar.Presenter.IAlarmController;
 import com.example.cgh.calendar.Presenter.ICallDateTimePicker;
 import com.example.cgh.calendar.Presenter.IItemAdapter;
+import com.example.cgh.calendar.Presenter.IItemNotification;
 import com.example.cgh.calendar.Presenter.IRealmController;
 import com.example.cgh.calendar.Presenter.IonClickDialogEvent;
 import com.example.cgh.calendar.Presenter.ItemAdapter;
+import com.example.cgh.calendar.Presenter.ItemBroadCastReceiver;
+import com.example.cgh.calendar.Presenter.ItemNotification;
 import com.example.cgh.calendar.Presenter.RealmController;
 import com.example.cgh.calendar.Presenter.onClickDialogEvent;
 import com.example.cgh.calendar.R;
@@ -41,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
     IonClickDialogEvent onClickDialogEvent;
     IRealmController realmController;
     ICallDateTimePicker callDateTimePicker;
+    IAlarmController alarmController;
     //getPresenter，當其他Presenter可能需要呼叫其他Presenter時透過此方法
     @Override
     public Context getAppContext(){
@@ -62,7 +74,12 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
     public ICallDateTimePicker getCallDateTimePicker(){
         return this.callDateTimePicker;
     }
+    @Override
+    public IAlarmController getAlarmController(){
+        return this.alarmController;
+    }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         realmController = new RealmController();
         onClickDialogEvent = new onClickDialogEvent();
         itemAdapter = new ItemAdapter();
+        alarmController = new AlarmController();
         //先new，當要用到時才用init(IMainActivity.getPresenter)的方式取得其他Presenter，避免無窮迴圈與nullObject情況
 
         //初始化RealmController
@@ -96,6 +114,36 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(itemAdapter.swipController());
         mItemTouchHelper.attachToRecyclerView(itemRecyclerView);
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //測試推播
+        /*
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE)+2);
+        String testNotificationDateTime = callDateTimePicker.getCurrentTime();
+
+        alarmController.setAlarm("TestNotification", 0, testNotificationDateTime, this);
+        */
+        //alarmController.cancel(0, this);
+        /*
+        alarmController = new AlarmController();
+        alarmController.setAlarm("TestNotification" ,0, Calendar.getInstance(), this);
+
+        //設定alarmManager依時間傳送廣播訊息(帶有itemText)
+        Intent mIntent = new Intent();
+        //透過setData來控制取消
+        mIntent.setClass(context, ItemBroadCastReceiver.class);
+        mIntent.setData(Uri.parse(String.valueOf(1)));
+        mIntent.setAction("com.cgh.ItemBroadCastMessage");
+        mIntent.putExtra("itemText", "TEST");//notification文字內容
+
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
+        */
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //fab點擊新增資料
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener(){
             @Override

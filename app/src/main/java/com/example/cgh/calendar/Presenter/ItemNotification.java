@@ -1,12 +1,18 @@
 package com.example.cgh.calendar.Presenter;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.cgh.calendar.View.MainActivity;
 
@@ -22,9 +28,12 @@ public class ItemNotification implements IItemNotification{
     private NotificationManager notificationManager;
     private Notification notification;
 
+    @TargetApi(Build.VERSION_CODES.O)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void setNotification(String itemText, Context context){
+        Log.i("setNotification", itemText);
+        Log.i("setNotification.context", String.valueOf(context));
         notificationManager = (NotificationManager)context.getSystemService(NOTIFICATION_SERVICE);
 
         intent = new Intent();
@@ -33,16 +42,43 @@ public class ItemNotification implements IItemNotification{
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(context, NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         int defaults = 0;
         defaults |= Notification.DEFAULT_VIBRATE;//加入震動效果
         defaults |= Notification.DEFAULT_LIGHTS;//加入閃燈效果
+
+        // The id of the channel.
+        final String id = "Calendar_Channel";
+        // The user-visible name of the channel.
+        CharSequence name = "Calendar_Channel";
+        // The user-visible description of the channel.
+        String description = "Calendar_Channel";
+        int importance = NotificationManager.IMPORTANCE_LOW;
+        //Channel:Android 8.0以上必須加入才能運作notification
+        NotificationChannel calendarChannel = new NotificationChannel(id, name,importance);
+        // Configure the notification channel.
+        calendarChannel.setDescription(description);
+        calendarChannel.enableLights(true);
+        // Sets the notification light color for notifications posted to this
+        // channel, if the device supports this feature.
+        calendarChannel.setLightColor(Color.RED);
+        calendarChannel.enableVibration(true);
+        calendarChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+        notificationManager.createNotificationChannel(calendarChannel);
+
+        // Sets an ID for the notification, so it can be updated.
+        int notifyID = 1;
+        // The id of the channel.
+        String CHANNEL_ID = "Calendar_Channel";
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         notification = new Notification.Builder(context)
                 .setSmallIcon(android.R.drawable.sym_def_app_icon)
                 .setContentTitle("NotificationMessage")
                 .setContentText(itemText)
                 .setContentIntent(pendingIntent)
+                .setChannelId(CHANNEL_ID)
                 .setDefaults(defaults)
                 .build();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
@@ -50,32 +86,5 @@ public class ItemNotification implements IItemNotification{
 
         //寄送notification
         notificationManager.notify(0, notification);
-
-
-		/*
-		//建立Notification.Builder物件
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		//設定Notification物件內容
-		builder.setSmallIcon(r.drawable.notify_small_icon)
-				.setWhen(System.currentTimeMillis())
-				.setContentTitle("Title")
-				.setContentText("Text");
-		int defaults = 0;
-		defaults |= Notification.DEFAULT_VIBRATE;//加入震動效果
-		defaults |= Notification.DEFAULT_LIGHTS;//加入閃燈效果
-		builder.setDefaults(defaults);
-
-		Manifest需開啟震動功能
-		<?xml version="1.0" encoding="utf-8"?>
-		<manifest ... >
-			<uses-permission android:name="android.permission.VIBRATE"/>
-			<application ... >
-				...
-			</application>
-		</manifest>
-
-		Notification notification = builder.build();
-		manager.notify(CUSTOM_EFFECT_ID, notification);
-		*/
     }
 }

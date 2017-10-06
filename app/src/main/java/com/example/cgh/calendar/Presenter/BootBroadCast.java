@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.cgh.calendar.Model.DataSaveByRealm;
@@ -17,6 +18,7 @@ import io.realm.RealmResults;
 
 public class BootBroadCast extends BroadcastReceiver {
     IRealmController realmController = new RealmController();
+    IAlarmController alarmController = new AlarmController();
     //////////////////////////////////////////////////////////沒有Realm.init(context);
     @Override
     public void onReceive(Context context, Intent intent){
@@ -24,10 +26,13 @@ public class BootBroadCast extends BroadcastReceiver {
         if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())){
             RealmResults<DataSaveByRealm> itemData = realmController.searchAll();
             int i=0;
+            //取得所有Realm中資料，設定時間並寄出itemText
             for(i=0; i<itemData.size(); i++) {
                 DataSaveByRealm sendData = itemData.get(i);///////////////////需修改get(0)為最小日期的數字 or 設成for全部丟進alarmManager
                 //取得所有notifcation的時間
-                String dateTime = sendData.getDateTime();
+                //String dateTime = sendData.getDateTime();
+                alarmController.setAlarm(sendData.getItemText(), i, sendData.getDateTime(), context);
+                /*
                 Calendar c = Calendar.getInstance();
                 //設定Calendar為dateTime時間
                 //Format of dateTime: "YYYYMMDDhhmm"
@@ -39,13 +44,17 @@ public class BootBroadCast extends BroadcastReceiver {
                 c.set(Calendar.SECOND, 0);
                 //設定alarmManager依時間傳送廣播訊息(帶有itemText)
                 Intent mIntent = new Intent();
+                //透過setData來控制取消
+                mIntent.setClass(context, ItemBroadCastReceiver.class);
+                mIntent.setData(Uri.parse(String.valueOf(i)));
                 mIntent.setAction("com.cgh.ItemBroadCastMessage");
                 mIntent.putExtra("itemText", sendData.getItemText());//notification文字內容
 
-                PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+                PendingIntent pi = PendingIntent.getBroadcast(context, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 am.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pi);
+                */
             }
         }
     }

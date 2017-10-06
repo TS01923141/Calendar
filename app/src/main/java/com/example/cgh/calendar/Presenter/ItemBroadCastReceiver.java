@@ -16,6 +16,7 @@ public class ItemBroadCastReceiver extends BroadcastReceiver{
     public static final String BROADCAST_ACTION = "com.cgh.ItemBroadCastMessage";
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
+    //接收itemText並推播
     public void onReceive(Context context, Intent intent) {
         if(BROADCAST_ACTION.equals(intent.getAction())){
             String itemText = intent.getStringExtra("itemText");

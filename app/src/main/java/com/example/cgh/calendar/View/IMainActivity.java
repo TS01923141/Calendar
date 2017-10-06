@@ -3,6 +3,7 @@ package com.example.cgh.calendar.View;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
+import com.example.cgh.calendar.Presenter.IAlarmController;
 import com.example.cgh.calendar.Presenter.ICallDateTimePicker;
 import com.example.cgh.calendar.Presenter.IItemAdapter;
 import com.example.cgh.calendar.Presenter.IRealmController;
@@ -23,4 +24,6 @@ public interface IMainActivity {
     IRealmController getRealmController();
 
     ICallDateTimePicker getCallDateTimePicker();
+
+    IAlarmController getAlarmController();
 }

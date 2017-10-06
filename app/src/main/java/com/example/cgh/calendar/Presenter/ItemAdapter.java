@@ -25,17 +25,18 @@ import io.realm.RealmResults;
  */
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> implements IItemAdapter{
-    private boolean onBind;
     private RealmResults<DataSaveByRealm> itemData;
     IMainActivity iMainActivity;
     IRealmController realmController;
     IonClickDialogEvent onClickDialogEvent;
+    IAlarmController alarmController;
 
     @Override
     public void initItemAdapter(IMainActivity iMainActivity) {
         this.iMainActivity = iMainActivity;
         this.onClickDialogEvent = iMainActivity.getOnClickDialogEvent();
         this.realmController = iMainActivity.getRealmController();
+        this.alarmController = iMainActivity.getAlarmController();
         itemData = realmController.searchAll();
         Log.i("itemData.size()", String.valueOf(itemData.size()));///////////////////////印出看size是什麼 IF(0 or null)給資料庫預設資料(歡迎使用行事曆)再回傳size else直接回傳size
 
@@ -69,6 +70,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
     //連結ListLayout的元件並作處理
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position){
+        //在此設定notification
+        alarmController.setAlarm(itemData.get(position).getItemText(), position, itemData.get(position).getDateTime(), iMainActivity.getAppContext());
         //將YYYYMMDDhhmm格式轉為YYYY/MM/DD hh:mm
         String viewDateTime = itemData.get(position).getDateTime().substring(0,4) + "/" +
                 itemData.get(position).getDateTime().substring(4,6) + "/" +
@@ -90,6 +93,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
                 onClickDialogEvent.Click(position);
                 refreshItemAdapter();
                 notifyDataSetChanged();
+                //修改後取消原本notification，再重新掛載修改後的資料
+                alarmController.cancel(position, iMainActivity.getAppContext());
+                alarmController.setAlarm(itemData.get(position).getItemText(), position, itemData.get(position).getDateTime(), iMainActivity.getAppContext());
             }
         });
     }
@@ -116,6 +122,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
     public void removeItem(int index){
         realmController.deleteDate(index);
     }
+
     @Override
     //RecyclerView滑動刪除與item上下位移
     public ItemTouchHelper.Callback swipController(){
