@@ -20,7 +20,7 @@ import java.util.Calendar;
 /**
  * Created by cgh on 2017/9/6.
  */
-
+//此處控制Dialog
 public class onClickDialogEvent implements IonClickDialogEvent{
     String itemText = ""; String dateTime = "";
     IMainActivity iMainActivity;
@@ -41,6 +41,7 @@ public class onClickDialogEvent implements IonClickDialogEvent{
         this.dateTime = dateTime;
     }
     @Override
+    //設定Dialog
     public void Click(final int position){////////////////////////////回傳值修改
         //初始化自訂Dialog介面與設定
         final View item = LayoutInflater.from(MainActivity.activity).inflate(R.layout.dialog_view,null);
@@ -50,13 +51,11 @@ public class onClickDialogEvent implements IonClickDialogEvent{
         //editText帶入目前資料
         edit_itemText.setText(itemText);
         //將YYYYMMDDhhmm轉為 YYYY/MM/DD hh:mm
-        //edit_date.setText(dateTime.substring(0,8));
         edit_date.setText(
                 dateTime.substring(0,4) + "/" +
                 dateTime.substring(4,6) + "/" +
                 dateTime.substring(6,8)
         );
-        //edit_time.setText(dateTime.substring(8));
         edit_time.setText(
                 dateTime.substring(8,10) + ":" +
                 dateTime.substring(10)
@@ -83,13 +82,14 @@ public class onClickDialogEvent implements IonClickDialogEvent{
         //Dialog
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.activity);
         alertDialogBuilder
-                .setTitle("修改資料")
+                .setTitle("增修資料")
                 .setView(item)
                 .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //取得在AlertDialog修改後的值並新增/修改資料庫的值
                         itemText = edit_itemText.getText().toString();
+                        //合併edit_date(YYYYMMDD)與edit_time(hhmm)的值，為YYYYMMDDhhmm
                         dateTime = dateFormat2String(edit_date.getText().toString(), edit_time.getText().toString());
                         //if(position == -1)代表新增，其餘則為修改
                         if (position == -1) {

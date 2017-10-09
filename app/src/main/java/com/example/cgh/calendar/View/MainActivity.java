@@ -39,10 +39,7 @@ import com.example.cgh.calendar.R;
 import java.util.Calendar;
 
 import io.realm.Realm;
-/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-要先解決Presenter互new與nullObject問題(new的時候Activity還沒建)
 
- */
 public class MainActivity extends AppCompatActivity implements IMainActivity{
     private static Context context;
     public static Activity activity;
@@ -91,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         //等super.onCreate結束之後才開始new Presenter，避免，避免null問題
         callDateTimePicker = new CallDateTimePicker();
         realmController = new RealmController();
+        //若資料庫大小為0，新增一筆資料避免錯誤
+        if(realmController.searchAll().size()==0)  realmController.insertData("Welcome to use Calendar", callDateTimePicker.getCurrentTime(), 0);
         onClickDialogEvent = new onClickDialogEvent();
         itemAdapter = new ItemAdapter();
         alarmController = new AlarmController();
@@ -98,8 +97,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
 
         //初始化RealmController
         realmController.initRealmController(this);
-        //若資料庫大小為0，新增一筆資料避免錯誤
-        if(realmController.searchAll().size()==0)  realmController.insertData("Welcome to use Calendar", callDateTimePicker.getCurrentTime(), 0);
         //初始化alertDialog
         onClickDialogEvent.initOnClickDialogEvent(this);
         //初始化RecyclerView
@@ -113,36 +110,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         //RecycleView滑動控制
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(itemAdapter.swipController());
         mItemTouchHelper.attachToRecyclerView(itemRecyclerView);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //測試推播
-        /*
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE)+2);
-        String testNotificationDateTime = callDateTimePicker.getCurrentTime();
-
-        alarmController.setAlarm("TestNotification", 0, testNotificationDateTime, this);
-        */
-        //alarmController.cancel(0, this);
-        /*
-        alarmController = new AlarmController();
-        alarmController.setAlarm("TestNotification" ,0, Calendar.getInstance(), this);
-
-        //設定alarmManager依時間傳送廣播訊息(帶有itemText)
-        Intent mIntent = new Intent();
-        //透過setData來控制取消
-        mIntent.setClass(context, ItemBroadCastReceiver.class);
-        mIntent.setData(Uri.parse(String.valueOf(1)));
-        mIntent.setAction("com.cgh.ItemBroadCastMessage");
-        mIntent.putExtra("itemText", "TEST");//notification文字內容
-
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
-        */
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         //fab點擊新增資料
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener(){

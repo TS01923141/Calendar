@@ -16,15 +16,18 @@ import io.realm.RealmResults;
 /**
  * Created by cgh on 2017/10/6.
  */
-
+//此處設定定時廣播或取消廣播
 public class AlarmController implements IAlarmController {
     @Override
+    //依dateTime設定廣播時間，內容為itemText，position用來確定在資料庫位置，以便取消廣播
     public void setAlarm(String itemText, int position, String dateTime, Context context){
         //將dateTime轉為calendar
         Calendar calendar = Calendar.getInstance();
         //設定Calendar為dateTime時間
         //Format of dateTime: "YYYYMMDDhhmm"
         calendar.set(Calendar.YEAR, Integer.parseInt(dateTime.substring(0,4)));
+        Log.i("Calendar.Month",dateTime.substring(4,6));
+        Log.i("Calendar.Month-1", String.valueOf(Integer.parseInt(dateTime.substring(4,6))-1));
         calendar.set(Calendar.MONTH, Integer.parseInt(dateTime.substring(4,6))-1);//因系統月份是0~11，因顯示問題+1月份，此處要-1回復原本系統月份
         calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateTime.substring(6,8)));
         calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(dateTime.substring(8,10)));
@@ -48,6 +51,7 @@ public class AlarmController implements IAlarmController {
         }
     }
     @Override
+    //依照position取消廣播
     public void cancel(int position, Context context){
         //取消該position的廣播
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -56,8 +60,6 @@ public class AlarmController implements IAlarmController {
         //透過setData來控制取消
         mIntent.setData(Uri.parse(String.valueOf(position)));
         mIntent.setAction("com.cgh.ItemBroadCastMessage");
-
-        //PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, mIntent, PendingIntent.FLAG_NO_CREATE);
         if (pi != null) am.cancel(pi);
     }

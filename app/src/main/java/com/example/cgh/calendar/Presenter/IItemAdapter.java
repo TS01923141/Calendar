@@ -9,7 +9,7 @@ import java.util.Calendar;
 /**
  * Created by cgh on 2017/9/7.
  */
-
+//此處控制RecyclerView
 public interface IItemAdapter{
     void initItemAdapter(IMainActivity iMainActivity);
 
@@ -24,6 +24,6 @@ public interface IItemAdapter{
 
     //刪除item
     void removeItem(int index);
-
+    //RecyclerView滑動刪除與item上下位移
     ItemTouchHelper.Callback swipController();
 }

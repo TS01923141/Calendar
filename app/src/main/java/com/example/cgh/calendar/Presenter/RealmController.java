@@ -17,7 +17,7 @@ import io.realm.RealmResults;
 /**
  * Created by cgh on 2017/9/5.
  */
-
+//此處控制Realm資料庫(新增修改查詢刪除)
 public class RealmController implements IRealmController{
     Realm mRealm = Realm.getDefaultInstance();
     IMainActivity iMainActivity;

@@ -10,7 +10,7 @@ import io.realm.RealmResults;
 /**
  * Created by cgh on 2017/9/5.
  */
-
+//此處控制Realm資料庫(新增修改查詢刪除)
 public interface IRealmController{
     void initRealmController(IMainActivity iMainActivity);
 

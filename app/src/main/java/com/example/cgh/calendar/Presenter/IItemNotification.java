@@ -9,7 +9,7 @@ import android.widget.Button;
 /**
  * Created by cgh on 2017/9/6.
  */
-
+//在此設定推播
 public interface IItemNotification{
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)

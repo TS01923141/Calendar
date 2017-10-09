@@ -21,7 +21,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 /**
  * Created by cgh on 2017/9/6.
  */
-
+//在此設定推播
 public class ItemNotification implements IItemNotification{
     private Intent intent;
     private static final int NOTIFICATION_ID = 0;
@@ -42,8 +42,9 @@ public class ItemNotification implements IItemNotification{
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(context, NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        //Channel:Android 8.0以上必須加入才能運作notification
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
         int defaults = 0;
         defaults |= Notification.DEFAULT_VIBRATE;//加入震動效果
         defaults |= Notification.DEFAULT_LIGHTS;//加入閃燈效果

@@ -7,12 +7,16 @@
     <TextView
         android:id="@+id/recyclerView_itemText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorCloseWhite"
+        android:textSize="18sp"/>
 
     <TextView
         android:id="@+id/recyclerView_dataTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/colorCloseWhite"
+        android:textSize="18sp"
         android:editable="false" />
     <!--android:focusable="false"-->
 </LinearLayout>

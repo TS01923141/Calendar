@@ -23,7 +23,7 @@ import io.realm.RealmResults;
 /**
  * Created by cgh on 2017/9/7.
  */
-
+//此處控制RecyclerView
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> implements IItemAdapter{
     private RealmResults<DataSaveByRealm> itemData;
     IMainActivity iMainActivity;
@@ -52,12 +52,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
             dateTime = (TextView) v.findViewById(R.id.recyclerView_dataTime);
         }
     }
-    //載入資料內容
+    //刷新資料內容
     @Override
     public void refreshItemAdapter(){
         itemData = realmController.searchAll();
         notifyDataSetChanged();
-        Log.i("itemData.size()", String.valueOf(itemData.size()));///////////////////////印出看size是什麼 IF(0 or null)給資料庫預設資料(歡迎使用行事曆)再回傳size else直接回傳size
     }
     //載入ListLayout
     @Override
@@ -67,7 +66,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
-    //連結ListLayout的元件並作處理
+    //連結ListLayout的元件並作處理，各個ListLayout的控制皆在此完成
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position){
         //在此設定notification
@@ -106,6 +105,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
     }
     //新增item-新增資料進資料庫後刷新
     @Override
+    //新增ListLayout項目
     public void addItem(String itemText, String dateTime){
         int newPrimaryKey;
         Log.i("searchAll()", String.valueOf(realmController.searchAll()));
@@ -114,11 +114,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
         realmController.insertData(itemText, dateTime, newPrimaryKey);
     }
     @Override
+    //修改ListLayout項目
     public void updateItem(String itemText, String dateTime, int position){
         realmController.updateData(itemText, dateTime, position);
     }
     @Override
-    //刪除item
+    //刪除ListLayout項目
     public void removeItem(int index){
         realmController.deleteDate(index);
     }
@@ -151,27 +152,3 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
         return mCallback;
     }
 }
-/*
-    //RecyclerView滑動刪除與item上下位移
-    ItemTouchHelper.Callback mCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP|ItemTouchHelper.DOWN,ItemTouchHelper.START|ItemTouchHelper.END){
-        @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecycleView.ViewHolder target){
-            int formPosition = viewHolder.getAdapterPosition();
-            int toPosition = target.getAdapterPosition();
-            ItemAdapter.notifyItemMoved(fromPosition, toPosition);
-            return true;
-        }
-        @Override
-        public int getMoveMentFlages(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder){
-            return makeMovementFlags(getDragDirs(recyclerView, viewHolder), getSwipeDirs(recyclerView, viewHolder));
-        }
-        @Override
-        public 	void onSwiped(RecycleView.ViewHolder viewHolder, int direction){
-            int position = viewHolder.getAdapterPosition();
-            itemData.remove(position);
-            ItemAdapter.notifyItemRemoved(position);
-        }
-        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(mCallback);
-mItemTouchHelper.attachToRecyclerView(MainActivity.itemRecycleView);
-    }
-*/

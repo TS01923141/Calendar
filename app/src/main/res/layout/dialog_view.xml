@@ -8,35 +8,41 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="18sp"
         android:text="事情" />
 
     <EditText
         android:id="@+id/edit_itemText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="18sp"/>
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="日期" />
+        android:text="日期"
+        android:textSize="18sp"/>
 
     <EditText
         android:id="@+id/edit_data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="18sp"
         android:editable="false" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="時間" />
+        android:text="時間"
+        android:textSize="18sp"/>
 
     <EditText
         android:id="@+id/edit_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="18sp"
         android:editable="false"
         />
 
