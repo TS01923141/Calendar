@@ -145,6 +145,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
+                alarmController.cancel(position, iMainActivity.getAppContext());
                 removeItem(position);
                 notifyItemRemoved(position);
             }
