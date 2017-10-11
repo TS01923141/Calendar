@@ -9,7 +9,7 @@
 ### Model ###
   DataSaveByRealm:Realm資料庫   
 ### Presenter ###
-  AlarmController:控制AlarmManager，設定Alarm寄送廣播  
+  AlarmController:控制AlarmManager，設定Alarm寄送廣播  
   BootBroadCast:接收Android開機廣播，寄資料給AlarmController  
   CallDateTimePicker:控制設定時間時的DatePicker與TimePicker  
   ItemAdapter:控制RecyclerView，新增修改刪除RecyclerView的Item並通知RealmController做資料庫處理  
