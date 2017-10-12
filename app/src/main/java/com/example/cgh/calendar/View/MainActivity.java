@@ -122,4 +122,10 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realmController.closeRealm();
+    }
 }

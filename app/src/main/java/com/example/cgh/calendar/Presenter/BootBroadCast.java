@@ -7,9 +7,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.cgh.calendar.Model.DataSaveByRealm;
+
+import org.reactivestreams.Publisher;
+
 import java.util.Calendar;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.realm.RealmResults;
 
 /**
@@ -31,6 +43,22 @@ public class BootBroadCast extends BroadcastReceiver {
                 //取得所有notifcation的時間
                 alarmController.setAlarm(sendData.getItemText(), i, sendData.getDateTime(), context);
             }
+            /*
+            Flowable.just(itemData)
+                    .flatMap(new Function<RealmResults<DataSaveByRealm>, Publisher<DataSaveByRealm>>() {
+                        @Override
+                        public Publisher<DataSaveByRealm> apply(@NonNull RealmResults<DataSaveByRealm> dataSaveByRealms) throws Exception {
+                            return Flowable.fromIterable(dataSaveByRealms);
+                        }
+                    })
+                    .subscribe(new Consumer<DataSaveByRealm>() {
+                        @Override
+                        public void accept(@NonNull DataSaveByRealm dataSaveByRealm) throws Exception {
+                            Log.i("RxJavaX", String.valueOf(dataSaveByRealm.getID()));
+                        }
+                    });
+            */
         }
+        realmController.closeRealm();
     }
 }

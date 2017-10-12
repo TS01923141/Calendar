@@ -57,7 +57,7 @@ public class RealmController implements IRealmController{
     }
     //刪除資料
     @Override
-    public void deleteDate(final int position){
+    public void deleteData(final int position){
         mRealm.executeTransaction(new Realm.Transaction(){
             @Override
             public void execute(Realm realm){
@@ -75,5 +75,10 @@ public class RealmController implements IRealmController{
     @Override
     public RealmResults<DataSaveByRealm> searchData(String searchType, String searchEqual){
         return mRealm.where(DataSaveByRealm.class).equalTo(searchType, searchEqual).findAll();
+    }
+    //關閉資料庫
+    @Override
+    public void closeRealm(){
+        mRealm.close();
     }
 }

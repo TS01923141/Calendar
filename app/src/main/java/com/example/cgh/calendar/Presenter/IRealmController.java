@@ -21,11 +21,13 @@ public interface IRealmController{
     void updateData(String itemText, String dateTime, int position);
 
     //刪除資料
-    void deleteDate(int position);
+    void deleteData(int position);
 
     //查詢全部資料
     RealmResults<DataSaveByRealm> searchAll();
 
     //查詢單筆資料
     RealmResults<DataSaveByRealm> searchData(String searchType, String searchEqual);
+    //關閉資料庫
+    void closeRealm();
 }

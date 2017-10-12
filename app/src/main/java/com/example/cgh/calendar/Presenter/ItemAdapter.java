@@ -121,7 +121,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> im
     @Override
     //刪除ListLayout項目
     public void removeItem(int index){
-        realmController.deleteDate(index);
+        realmController.deleteData(index);
     }
 
     @Override
