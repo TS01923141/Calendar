@@ -77,6 +77,7 @@ public class AlarmController implements IAlarmController {
                 })
                 .subscribeOn(Schedulers.io())
                 //.observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribe(new Consumer<Calendar>() {
                     @Override
                     public void accept(@NonNull Calendar calendar) throws Exception {
@@ -102,6 +103,7 @@ public class AlarmController implements IAlarmController {
     public void cancel(final int position, final Context context){
         Flowable.just(position)
                 .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
                 .subscribe(new Consumer<Integer>() {
                     @Override
                     public void accept(@NonNull Integer integer) throws Exception {
