@@ -11,8 +11,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
 import com.example.cgh.calendar.View.MainActivity;
 
@@ -45,45 +43,60 @@ public class ItemNotification implements IItemNotification{
 
         //Channel:Android 8.0以上必須加入才能運作notification
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        int defaults = 0;
-        defaults |= Notification.DEFAULT_VIBRATE;//加入震動效果
-        defaults |= Notification.DEFAULT_LIGHTS;//加入閃燈效果
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.i("this API levels >=","Oreo");
+            int defaults = 0;
+            defaults |= Notification.DEFAULT_VIBRATE;//加入震動效果
+            defaults |= Notification.DEFAULT_LIGHTS;//加入閃燈效果
 
-        // The id of the channel.
-        final String id = "Calendar_Channel";
-        // The user-visible name of the channel.
-        CharSequence name = "Calendar_Channel";
-        // The user-visible description of the channel.
-        String description = "Calendar_Channel";
-        int importance = NotificationManager.IMPORTANCE_LOW;
-        //Channel:Android 8.0以上必須加入才能運作notification
-        NotificationChannel calendarChannel = new NotificationChannel(id, name,importance);
-        // Configure the notification channel.
-        calendarChannel.setDescription(description);
-        calendarChannel.enableLights(true);
-        // Sets the notification light color for notifications posted to this
-        // channel, if the device supports this feature.
-        calendarChannel.setLightColor(Color.RED);
-        calendarChannel.enableVibration(true);
-        calendarChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-        notificationManager.createNotificationChannel(calendarChannel);
+            // The id of the channel.
+            final String id = "Calendar_Channel";
+            // The user-visible name of the channel.
+            CharSequence name = "Calendar_Channel";
+            // The user-visible description of the channel.
+            String description = "Calendar_Channel";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            //Channel:Android 8.0以上必須加入才能運作notification
+            NotificationChannel calendarChannel = new NotificationChannel(id, name, importance);
+            // Configure the notification channel.
+            calendarChannel.setDescription(description);
+            calendarChannel.enableLights(true);
+            // Sets the notification light color for notifications posted to this
+            // channel, if the device supports this feature.
+            calendarChannel.setLightColor(Color.RED);
+            calendarChannel.enableVibration(true);
+            calendarChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            notificationManager.createNotificationChannel(calendarChannel);
 
-        // Sets an ID for the notification, so it can be updated.
-        int notifyID = 1;
-        // The id of the channel.
-        String CHANNEL_ID = "Calendar_Channel";
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Sets an ID for the notification, so it can be updated.
+            int notifyID = 1;
+            // The id of the channel.
+            String CHANNEL_ID = "Calendar_Channel";
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        notification = new Notification.Builder(context)
-                .setSmallIcon(android.R.drawable.sym_def_app_icon)
-                .setContentTitle("NotificationMessage")
-                .setContentText(itemText)
-                .setContentIntent(pendingIntent)
-                .setChannelId(CHANNEL_ID)
-                .setDefaults(defaults)
-                .build();
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
-
+            notification = new Notification.Builder(context)
+                    .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                    .setContentTitle("NotificationMessage")
+                    .setContentText(itemText)
+                    .setContentIntent(pendingIntent)
+                    .setChannelId(CHANNEL_ID)
+                    .setDefaults(defaults)
+                    .build();
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
+        }else{
+            Log.i("this API levels <","Oreo");
+            int defaults = 0;
+            defaults |= Notification.DEFAULT_VIBRATE;//加入震動效果
+            defaults |= Notification.DEFAULT_LIGHTS;//加入閃燈效果
+            notification = new Notification.Builder(context)
+                    .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                    .setContentTitle("NotificationMessage")
+                    .setContentText(itemText)
+                    .setContentIntent(pendingIntent)
+                    .setDefaults(defaults)
+                    .build();
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
+        }
 
         //寄送notification
         notificationManager.notify(0, notification);
