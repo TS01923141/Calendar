@@ -5,6 +5,8 @@
 左右滑動item刪除事件  
 當到達事件設定時間時會寄出推播以通知使用者  
 
+## 架構圖 ##
+![image](https://raw.githubusercontent.com/TS01923141/Calendar/master/Overview.jpg)
 ## 程式類別: ##
 ### Model ###
   DataSaveByRealm:Realm資料庫   
